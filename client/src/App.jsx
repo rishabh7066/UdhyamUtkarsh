@@ -34,7 +34,14 @@ import {
   Sparkles,
   Calculator,
   Code2,
-  CheckCircle
+  CheckCircle,
+  QrCode,
+  Video,
+  ExternalLink,
+  ShoppingCart,
+  BarChart3,
+  TrendingUp,
+  BookOpen
 } from 'lucide-react';
 
 export default function App() {
@@ -49,6 +56,15 @@ export default function App() {
 
   // Left Feature Navigation State for Section 2 (7 Core MVP Features)
   const [selectedFeature, setSelectedFeature] = useState(1);
+
+  // Category 1 & 2 Roadmap States:
+  const [showTemplateLibraryModal, setShowTemplateLibraryModal] = useState(false);
+  const [showVideoGuideModal, setShowVideoGuideModal] = useState(false);
+  const [hmiActiveTab, setHmiActiveTab] = useState('controls'); // 'controls' | 'analytics'
+  const [orderKitSuccess, setOrderKitSuccess] = useState(false);
+  const [activeVideoStep, setActiveVideoStep] = useState(1);
+  const [showSubmodulesOption, setShowSubmodulesOption] = useState(false);
+  const [showTelemetryOption, setShowTelemetryOption] = useState(false);
 
   // Modals & Popups
   const [showBlueprintModal, setShowBlueprintModal] = useState(false);
@@ -68,6 +84,75 @@ export default function App() {
     budget: 3500,
     voltage: '230V AC'
   });
+
+  // Indian Machine Template Library Data (Tulip's Library / Vention's Design Templates)
+  const machineTemplates = [
+    {
+      id: 'pvc-cutter',
+      name: 'PVC Pipe Cutting Machine',
+      category: 'Plastic & Conduit Extrusion',
+      problem: 'Automate cut length at 2.0m with pneumatic clamp and circular saw blade trigger.',
+      budget: 3500,
+      voltage: '230V Single Phase AC',
+      iotCost: 2850,
+      plcCost: 38000,
+      savingsPct: 92.5,
+      inputs: ['IR Optical Sensor (Pipe arrival)', 'Inductive Proximity (Home position)', 'E-Stop Mushroom Button'],
+      actuators: ['Blade Motor Relay (230V AC)', 'Pneumatic Clamp Solenoid (12V DC)']
+    },
+    {
+      id: 'packaging-press',
+      name: 'Pneumatic Packaging Press',
+      category: 'Corrugated Box & Carton Sealing',
+      problem: 'Two-hand safety interlock to compress carton flaps, 1.8s dwell, auto eject cylinder.',
+      budget: 4200,
+      voltage: '230V Single Phase AC',
+      iotCost: 3200,
+      plcCost: 45000,
+      savingsPct: 92.8,
+      inputs: ['Dual Push Buttons (Anti-tiedown)', 'Pressure Switch (5 Bar)', 'E-Stop'],
+      actuators: ['Dual 5/2 Way Solenoid Valves', 'Pressure Release Exhaust']
+    },
+    {
+      id: 'manual-lathe',
+      name: 'Manual Lathe Semi-Auto Retrofit',
+      category: 'Metalworking & Machine Tool',
+      problem: 'Optical spindle RPM measurement, digital cross-slide length readout, and automatic carriage motor disengage at stop.',
+      budget: 4800,
+      voltage: '415V Three Phase AC',
+      iotCost: 3650,
+      plcCost: 52000,
+      savingsPct: 93.0,
+      inputs: ['Optical Spindle Tachometer', 'Carriage Limit Switch', 'Emergency Foot Brake'],
+      actuators: ['Feed Clutch Solenoid', 'Spindle Motor Contactor Trigger']
+    },
+    {
+      id: 'heat-sealer',
+      name: 'Continuous Bag Packaging Heat Sealer',
+      category: 'Food & Grain Packaging',
+      problem: 'Pneumatic jaw closure, 1.4s nichrome heating impulse, followed by 0.8s cooling cycle.',
+      budget: 3000,
+      voltage: '230V Single Phase AC',
+      iotCost: 2450,
+      plcCost: 32000,
+      savingsPct: 92.3,
+      inputs: ['Foot Pedal Switch', 'NTC 100K Thermistor Heat Sensor', 'Safety Guard'],
+      actuators: ['SSR 40A Nichrome Wire Relay', 'Pneumatic Jaw Cylinder']
+    },
+    {
+      id: 'mitre-cutter',
+      name: 'Photo Frame 45° Mitre Saw',
+      category: 'Wood & Aluminium Fabrication',
+      problem: 'Foot clamp hold, dual saw plunge sequencing, automatic return and piece counter.',
+      budget: 4500,
+      voltage: '230V Single Phase AC',
+      iotCost: 3450,
+      plcCost: 42000,
+      savingsPct: 91.8,
+      inputs: ['Foot Pedal Microswitch', 'Upper/Lower Stroke Limits', 'Safety Shield Switch'],
+      actuators: ['Pneumatic Clamp', 'Twin Motor Relays']
+    }
+  ];
 
   // Feature 5: AI Vision to G-Code state
   const [selectedGcodeShape, setSelectedGcodeShape] = useState('flange');
@@ -164,6 +249,18 @@ export default function App() {
     }, 4000);
   };
 
+  const handleLoadTemplate = (template) => {
+    setIntakeData({
+      machineType: template.name,
+      problem: template.problem,
+      budget: template.budget,
+      voltage: template.voltage
+    });
+    setShowTemplateLibraryModal(false);
+    setSelectedFeature(2);
+    scrollToSection('features-section');
+  };
+
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
@@ -218,7 +315,7 @@ export default function App() {
             <ChevronDown size={14} />
           </div>
 
-          <div className="tulip-nav-link" onClick={() => setShowBlueprintModal(true)}>
+          <div className="tulip-nav-link" onClick={() => setShowTemplateLibraryModal(true)}>
             <span>Library</span>
           </div>
         </nav>
@@ -676,140 +773,219 @@ export default function App() {
               {selectedFeature === 7 && 'Find Local Fitters Near Me'}
             </button>
 
-            {/* Embedded Studio App Window */}
+            {/* Embedded Studio App Window (Clean Full-Width Display) */}
             <div className="embedded-studio-card">
-              {/* Top Studio Navbar */}
-              <div className="studio-navbar">
-                <div className="studio-nav-left">
-                  <div className="studio-pill-tag">
-                    <Boxes size={14} color="#f5e482" />
-                    <span>
-                      {selectedFeature === 1 && 'Smart Intake Engine'}
-                      {selectedFeature === 2 && 'Cost Crusher ROI'}
-                      {selectedFeature === 3 && 'Smart Sourcing BOM'}
-                      {selectedFeature === 4 && 'Firmware & Wiring'}
-                      {selectedFeature === 5 && 'AI Vision to G-Code Studio'}
-                      {selectedFeature === 6 && 'ESP32 Smartphone HMI'}
-                      {selectedFeature === 7 && 'Uber for Fitters Network'}
+              {/* Clean Studio Top Action Bar */}
+              <div className="studio-top-action-bar">
+                <div className="studio-status-indicator">
+                  <div className="studio-status-dot" />
+                  <span>
+                    {selectedFeature === 1 && 'Smart Intake Engine • Interactive Blueprint'}
+                    {selectedFeature === 2 && 'Cost-Crusher Arbitrage Engine • Fleet Scaler'}
+                    {selectedFeature === 3 && 'AI-Generated BOM & 1-Click Parts Marketplace'}
+                    {selectedFeature === 4 && 'Auto-Generated C++ Firmware & Pin Schematics'}
+                    {selectedFeature === 5 && 'Gemini Vision AI to CNC G-Code Studio'}
+                    {selectedFeature === 6 && 'Connected Worker Terminal • Edge Smartphone HMI'}
+                    {selectedFeature === 7 && 'Verified Local Electrician Gig Marketplace'}
+                  </span>
+                </div>
+
+                <div className="studio-options-group">
+                  <button
+                    type="button"
+                    className={`studio-option-btn ${showSubmodulesOption ? 'active' : ''}`}
+                    onClick={() => {
+                      setShowSubmodulesOption(!showSubmodulesOption);
+                      if (showTelemetryOption) setShowTelemetryOption(false);
+                    }}
+                    title="Toggle Sub-Modules"
+                  >
+                    <Layers size={13} />
+                    <span>Sub-Modules</span>
+                    <ChevronDown size={12} style={{ transform: showSubmodulesOption ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`studio-option-btn ${showTelemetryOption ? 'active' : ''}`}
+                    onClick={() => {
+                      setShowTelemetryOption(!showTelemetryOption);
+                      if (showSubmodulesOption) setShowSubmodulesOption(false);
+                    }}
+                    title="Toggle Telemetry & Specs"
+                  >
+                    <Activity size={13} />
+                    <span>Telemetry & Specs</span>
+                    <ChevronDown size={12} style={{ transform: showTelemetryOption ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Sliding Sub-Modules Option Drawer */}
+              {showSubmodulesOption && (
+                <div className="studio-options-drawer">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: '#f5e482', letterSpacing: 0.5 }}>
+                      ACTIVE SUB-MODULES & ARCHITECTURE
                     </span>
-                    <ChevronDown size={12} />
+                    <button
+                      type="button"
+                      style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: 11, fontWeight: 700 }}
+                      onClick={() => setShowSubmodulesOption(false)}
+                    >
+                      ✕ Close
+                    </button>
                   </div>
-
-                  <div className="studio-tabs-row">
-                    <span className={`studio-tab-item ${selectedFeature === 1 ? 'active' : ''}`} onClick={() => setSelectedFeature(1)}>Smart Ask</span>
-                    <span className={`studio-tab-item ${selectedFeature === 2 ? 'active' : ''}`} onClick={() => setSelectedFeature(2)}>Cost Crusher</span>
-                    <span className={`studio-tab-item ${selectedFeature === 3 ? 'active' : ''}`} onClick={() => setSelectedFeature(3)}>BOM</span>
-                    <span className={`studio-tab-item ${selectedFeature === 4 ? 'active' : ''}`} onClick={() => setSelectedFeature(4)}>Tech Blueprint</span>
-                    <span className={`studio-tab-item ${selectedFeature === 5 ? 'active' : ''}`} onClick={() => setSelectedFeature(5)}>Vision G-Code</span>
-                    <span className={`studio-tab-item ${selectedFeature === 6 ? 'active' : ''}`} onClick={() => setSelectedFeature(6)}>Phone HMI</span>
-                    <span className={`studio-tab-item ${selectedFeature === 7 ? 'active' : ''}`} onClick={() => setSelectedFeature(7)}>Fitters</span>
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                    {selectedFeature === 1 && ['Machine Type Parser', 'Problem Spec Engine', 'Budget Bounds (₹2k-₹10k)', 'Safety Triggers'].map((m, i) => (
+                      <span key={i} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: 8, fontSize: 11.5, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <CheckCircle size={12} color="#22c55e" /> {m}
+                      </span>
+                    ))}
+                    {selectedFeature === 2 && ['PLC vs IoT Arbitrage', '92% Savings Matrix', 'Payback Calculator', 'Fleet Scale Multiplier'].map((m, i) => (
+                      <span key={i} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: 8, fontSize: 11.5, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <CheckCircle size={12} color="#22c55e" /> {m}
+                      </span>
+                    ))}
+                    {selectedFeature === 3 && ['ESP32 240MHz Node', '4-Channel Opto Relays', 'Inductive Proximity Sensor', 'Chawri Bazar / Robu Hubs'].map((m, i) => (
+                      <span key={i} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: 8, fontSize: 11.5, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <CheckCircle size={12} color="#22c55e" /> {m}
+                      </span>
+                    ))}
+                    {selectedFeature === 4 && ['C++ Firmware (.ino)', 'GPIO Pin Matrix', 'Watchdog Timer', 'Hardware E-Stop Interrupt'].map((m, i) => (
+                      <span key={i} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: 8, fontSize: 11.5, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <CheckCircle size={12} color="#22c55e" /> {m}
+                      </span>
+                    ))}
+                    {selectedFeature === 5 && ['Flange Gasket Contours', 'L-Bracket Vectors', 'Pipe Cut & Chamfer', 'Precision CNC Coordinates'].map((m, i) => (
+                      <span key={i} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: 8, fontSize: 11.5, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <CheckCircle size={12} color="#22c55e" /> {m}
+                      </span>
+                    ))}
+                    {selectedFeature === 6 && ['SoftAP 192.168.4.1', 'Connected Worker Terminal', 'Edge Gateway Connectivity', 'Zero Cloud Bill'].map((m, i) => (
+                      <span key={i} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: 8, fontSize: 11.5, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <CheckCircle size={12} color="#22c55e" /> {m}
+                      </span>
+                    ))}
+                    {selectedFeature === 7 && ['Verified Electrician Roster', 'Delhi NCR / Faridabad / Okhla', 'Under 24h SLA', '30-Day Workmanship Guarantee'].map((m, i) => (
+                      <span key={i} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: 8, fontSize: 11.5, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <CheckCircle size={12} color="#22c55e" /> {m}
+                      </span>
+                    ))}
                   </div>
                 </div>
+              )}
 
-                <div style={{ fontSize: 12, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22c55e' }} />
-                  <span>Interactive Live Studio</span>
+              {/* Sliding Telemetry & Specs Option Drawer */}
+              {showTelemetryOption && (
+                <div className="studio-options-drawer" style={{ borderBottomColor: 'rgba(56, 189, 248, 0.3)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: '#38bdf8', letterSpacing: 0.5 }}>
+                      HARDWARE TELEMETRY & SPECIFICATION AUDIT
+                    </span>
+                    <button
+                      type="button"
+                      style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: 11, fontWeight: 700 }}
+                      onClick={() => setShowTelemetryOption(false)}
+                    >
+                      ✕ Close
+                    </button>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 12 }}>
+                    <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.06)' }}>
+                      <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, marginBottom: 3 }}>ACTIVE SUBSYSTEM</div>
+                      <div style={{ fontSize: 12.5, fontWeight: 700, color: '#f5e482' }}>
+                        {selectedFeature === 1 && 'Smart Ask Parser'}
+                        {selectedFeature === 2 && 'ROI Cost Crusher'}
+                        {selectedFeature === 3 && 'BOM Sourcing Hub'}
+                        {selectedFeature === 4 && 'ISO 13849 Compiler'}
+                        {selectedFeature === 5 && 'Gemini Vision Engine'}
+                        {selectedFeature === 6 && 'ESP32 SoftAP WebServer'}
+                        {selectedFeature === 7 && 'Fitter Dispatch SLA'}
+                      </div>
+                    </div>
+                    <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.06)' }}>
+                      <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, marginBottom: 3 }}>CONTROLLER TARGET</div>
+                      <div style={{ fontSize: 12.5, fontWeight: 700, color: '#ffffff' }}>ESP32 DevKit V1 (240MHz)</div>
+                    </div>
+                    <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.06)' }}>
+                      <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, marginBottom: 3 }}>NET CAPITAL SAVED</div>
+                      <div style={{ fontSize: 13, fontWeight: 800, color: '#22c55e' }}>
+                        ₹{((45000 - 3500) * retrofitMachineCount).toLocaleString('en-IN')} (-92.2%)
+                      </div>
+                    </div>
+                    <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.06)' }}>
+                      <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, marginBottom: 3 }}>NETWORK / LATENCY</div>
+                      <div style={{ fontSize: 12.5, fontWeight: 700, color: '#38bdf8' }}>Local SoftAP (&lt; 8ms latency)</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Sub-breadcrumbs bar */}
-              <div className="studio-breadcrumbs-row">
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span>UdyamUtkarsh</span>
-                  <span>/</span>
-                  <strong style={{ color: '#ffffff' }}>
-                    {selectedFeature === 1 && '01_Machine_Intake_Form'}
-                    {selectedFeature === 2 && '02_Cost_Crusher_ROI_Analysis'}
-                    {selectedFeature === 3 && '03_Bill_Of_Materials_Catalog'}
-                    {selectedFeature === 4 && '04_Arduino_Firmware_Pin_Wiring'}
-                    {selectedFeature === 5 && '05_Gemini_Vision_To_GCode'}
-                    {selectedFeature === 6 && '06_Mobile_Local_Web_HMI'}
-                    {selectedFeature === 7 && '07_Local_Electrician_Gig_Network'}
-                  </strong>
-                </div>
-                <div style={{ display: 'flex', gap: 14 }}>
-                  <span style={{ color: '#f5e482', fontWeight: 700 }}>● Demo Mode: Active</span>
-                </div>
-              </div>
-
-              {/* Canvas 3-Column Layout */}
+              {/* Full-Width Canvas Layout (No Left or Right Sidebars Cramping the Screen) */}
               <div className="studio-canvas-layout">
-                {/* Left Tree */}
-                <div className="studio-left-tree">
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', marginBottom: 10 }}>SUB-MODULES</div>
-
-                  {selectedFeature === 1 && (
-                    <>
-                      <div className="studio-tree-item active">› Machine Type</div>
-                      <div className="studio-tree-item">› Problem Spec</div>
-                      <div className="studio-tree-item">› Budget Bounds</div>
-                      <div className="studio-tree-item">› Safety Triggers</div>
-                    </>
-                  )}
-
-                  {selectedFeature === 2 && (
-                    <>
-                      <div className="studio-tree-item active">› PLC vs IoT Table</div>
-                      <div className="studio-tree-item">› 92% Savings Matrix</div>
-                      <div className="studio-tree-item">› Payback Calculator</div>
-                      <div className="studio-tree-item">› 1-Year ROI Model</div>
-                    </>
-                  )}
-
-                  {selectedFeature === 3 && (
-                    <>
-                      <div className="studio-tree-item active">› ESP32 Controller</div>
-                      <div className="studio-tree-item">› Opto Relays</div>
-                      <div className="studio-tree-item">› Proximity & IR</div>
-                      <div className="studio-tree-item">› Sourcing Hubs</div>
-                    </>
-                  )}
-
-                  {selectedFeature === 4 && (
-                    <>
-                      <div className="studio-tree-item active">› C++ Firmware (.ino)</div>
-                      <div className="studio-tree-item">› Pin Matrix Table</div>
-                      <div className="studio-tree-item">› Watchdog Timer</div>
-                      <div className="studio-tree-item">› E-Stop Interrupt</div>
-                    </>
-                  )}
-
-                  {selectedFeature === 5 && (
-                    <>
-                      <div className="studio-tree-item active">› Flange Gasket</div>
-                      <div className="studio-tree-item">› L-Bracket</div>
-                      <div className="studio-tree-item">› Pipe Cut & Chamfer</div>
-                      <div className="studio-tree-item">› Toolpath Preview</div>
-                    </>
-                  )}
-
-                  {selectedFeature === 6 && (
-                    <>
-                      <div className="studio-tree-item active">› SoftAP 192.168.4.1</div>
-                      <div className="studio-tree-item">› Worker Controls</div>
-                      <div className="studio-tree-item">› Piece Counter</div>
-                      <div className="studio-tree-item">› Zero Laptop Needed</div>
-                    </>
-                  )}
-
-                  {selectedFeature === 7 && (
-                    <>
-                      <div className="studio-tree-item active">› Verified Fitters</div>
-                      <div className="studio-tree-item">› Delhi NCR Hub</div>
-                      <div className="studio-tree-item">› Faridabad & Okhla</div>
-                      <div className="studio-tree-item">› One-Click Dispatch</div>
-                    </>
-                  )}
-                </div>
-
-                {/* Center Canvas Area (Interactive Dynamic Feature Canvas) */}
                 <div className="studio-center-canvas">
                   {/* FEATURE 1: SMART ASK INPUT FORM */}
                   {selectedFeature === 1 && (
                     <div style={{ background: '#0b1424', borderRadius: 12, padding: 20, border: '1px solid rgba(255,255,255,0.08)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                         <span style={{ fontSize: 13, fontWeight: 800, color: '#f5e482' }}>📝 "Smart Ask" Simple Non-Technical Intake</span>
-                        <span style={{ fontSize: 11, color: '#22c55e', background: 'rgba(34,197,94,0.15)', padding: '2px 8px', borderRadius: 6 }}>● Ready for Input</span>
+                        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                          <button
+                            type="button"
+                            onClick={() => setShowTemplateLibraryModal(true)}
+                            style={{
+                              background: 'rgba(245, 228, 130, 0.15)',
+                              border: '1px solid rgba(245, 228, 130, 0.35)',
+                              color: '#f5e482',
+                              padding: '3px 10px',
+                              borderRadius: 6,
+                              fontSize: 11,
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 4
+                            }}
+                          >
+                            <BookOpen size={12} />
+                            <span>Browse Indian Template Library (5)</span>
+                          </button>
+                          <span style={{ fontSize: 11, color: '#22c55e', background: 'rgba(34,197,94,0.15)', padding: '2px 8px', borderRadius: 6 }}>● Ready for Input</span>
+                        </div>
+                      </div>
+
+                      {/* Indian Machine Template Quick Dropdown (Tulip's Library / Vention's Design Templates) */}
+                      <div style={{
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        border: '1px solid rgba(245, 228, 130, 0.25)',
+                        borderRadius: 10,
+                        padding: '10px 14px',
+                        marginBottom: 16
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                          <span style={{ fontSize: 11.5, color: '#f5e482', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5 }}>
+                            <Sparkles size={13} />
+                            <span>Indian Machine Template Library (1-Click Auto Fill):</span>
+                          </span>
+                          <span style={{ fontSize: 10.5, color: '#94a3b8' }}>Tulip & Vention Architecture</span>
+                        </div>
+                        <select
+                          className="dark-form-control"
+                          style={{ padding: '8px 12px', fontSize: 12, borderColor: 'rgba(245,228,130,0.3)', color: '#ffffff', cursor: 'pointer' }}
+                          onChange={(e) => {
+                            const found = machineTemplates.find(t => t.id === e.target.value);
+                            if (found) handleLoadTemplate(found);
+                          }}
+                          defaultValue=""
+                        >
+                          <option value="" disabled>-- Select Common Indian Workshop Machine --</option>
+                          {machineTemplates.map(t => (
+                            <option key={t.id} value={t.id}>
+                              {t.name} ({t.category}) — Budget: ₹{t.budget} (Save {t.savingsPct}%)
+                            </option>
+                          ))}
+                        </select>
                       </div>
 
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -818,15 +994,22 @@ export default function App() {
                             1. Machine Type (Apni Machine Chunein ya Likhein)
                           </label>
                           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
-                            {['PVC Pipe Cutter', 'Photo Frame 45° Mitre Cutter', 'Bag Packaging Heat Sealer', 'Rotary Punch Press'].map(m => (
+                            {['PVC Pipe Cutter', 'Pneumatic Packaging Press', 'Manual Lathe Semi-Auto', 'Bag Packaging Heat Sealer', 'Photo Frame 45° Mitre'].map(m => (
                               <button
                                 key={m}
                                 type="button"
-                                onClick={() => setIntakeData({ ...intakeData, machineType: m })}
+                                onClick={() => {
+                                  const match = machineTemplates.find(t => t.name.toLowerCase().includes(m.toLowerCase().slice(0, 5)));
+                                  if (match) {
+                                    handleLoadTemplate(match);
+                                  } else {
+                                    setIntakeData({ ...intakeData, machineType: m });
+                                  }
+                                }}
                                 style={{
-                                  background: intakeData.machineType === m ? 'rgba(245, 228, 130, 0.2)' : 'rgba(255,255,255,0.05)',
-                                  border: `1px solid ${intakeData.machineType === m ? '#f5e482' : 'rgba(255,255,255,0.1)'}`,
-                                  color: intakeData.machineType === m ? '#f5e482' : '#cbd5e1',
+                                  background: intakeData.machineType.includes(m.slice(0, 6)) ? 'rgba(245, 228, 130, 0.2)' : 'rgba(255,255,255,0.05)',
+                                  border: `1px solid ${intakeData.machineType.includes(m.slice(0, 6)) ? '#f5e482' : 'rgba(255,255,255,0.1)'}`,
+                                  color: intakeData.machineType.includes(m.slice(0, 6)) ? '#f5e482' : '#cbd5e1',
                                   padding: '5px 10px',
                                   borderRadius: 8,
                                   fontSize: 11.5,
@@ -1073,55 +1256,154 @@ export default function App() {
                     </div>
                   )}
 
-                  {/* FEATURE 3: AI-GENERATED BILL OF MATERIALS (BOM) */}
+                  {/* FEATURE 3: AI-GENERATED BILL OF MATERIALS (BOM) & 1-CLICK MARKETPLACE */}
                   {selectedFeature === 3 && (
                     <div style={{ background: '#0b1424', borderRadius: 12, padding: 18, border: '1px solid rgba(255,255,255,0.08)' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                        <span style={{ fontSize: 13, fontWeight: 800, color: '#38bdf8' }}>📦 AI-Generated Bill of Materials (BOM)</span>
-                        <span style={{ fontSize: 11, color: '#94a3b8' }}>Total: <strong style={{ color: '#f5e482', fontSize: 13 }}>₹1,980</strong></span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                        <div>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: '#38bdf8' }}>📦 AI-Generated BOM (Vention's Parts Marketplace)</span>
+                          <span style={{ fontSize: 11, color: '#94a3b8', display: 'block' }}>Direct links to Indian vendors (Robu.in & Amazon India) at factory wholesale rates</span>
+                        </div>
+                        <span style={{ fontSize: 11, color: '#94a3b8' }}>Total Kit: <strong style={{ color: '#f5e482', fontSize: 14 }}>₹1,980</strong></span>
                       </div>
 
-                      <div style={{ maxHeight: 220, overflowY: 'auto', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8 }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11.5, textAlign: 'left' }}>
+                      {orderKitSuccess && (
+                        <div style={{
+                          background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(6, 78, 59, 0.3) 100%)',
+                          border: '1px solid #22c55e',
+                          borderRadius: 8,
+                          padding: '10px 14px',
+                          marginBottom: 12,
+                          color: '#86efac',
+                          fontSize: 12,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <CheckCircle2 size={16} color="#22c55e" />
+                            <span>
+                              <strong>Order #UDYAM-98421 Placed!</strong> Pre-tested IoT kit dispatched from Delhi NCR Hub via BlueDart Express (24-48 hrs delivery).
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setOrderKitSuccess(false)}
+                            style={{ background: 'transparent', border: 'none', color: '#86efac', cursor: 'pointer', fontSize: 11, fontWeight: 700 }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      )}
+
+                      <div style={{ maxHeight: 320, overflowY: 'auto', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10 }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, textAlign: 'left' }}>
                           <thead>
-                            <tr style={{ background: 'rgba(255,255,255,0.04)', color: '#94a3b8' }}>
-                              <th style={{ padding: '8px 10px' }}>Component</th>
-                              <th style={{ padding: '8px 6px' }}>Qty</th>
-                              <th style={{ padding: '8px 10px' }}>Est. Price</th>
-                              <th style={{ padding: '8px 10px' }}>Purpose / Sourcing</th>
+                            <tr style={{ background: 'rgba(255,255,255,0.06)', color: '#94a3b8' }}>
+                              <th style={{ padding: '10px 14px' }}>Component</th>
+                              <th style={{ padding: '10px 8px' }}>Qty</th>
+                              <th style={{ padding: '10px 14px' }}>Est. Price</th>
+                              <th style={{ padding: '10px 14px' }}>Purpose / Sourcing</th>
+                              <th style={{ padding: '10px 14px', textAlign: 'right' }}>Indian Vendor</th>
                             </tr>
                           </thead>
                           <tbody>
                             {[
-                              { name: 'ESP32 DevKit V1 (30-Pin)', qty: 1, price: '₹450', hub: 'Chawri Bazar / Robu' },
-                              { name: '4-Channel Relay (Opto-Isolated)', qty: 1, price: '₹180', hub: 'Local Market / Quartz' },
-                              { name: 'Inductive Proximity (LJ12A3)', qty: 1, price: '₹190', hub: 'Industrial Limit Sensing' },
-                              { name: 'IR Obstacle Sensor (FC-51)', qty: 1, price: '₹50', hub: 'Pipe Arrival Detection' },
-                              { name: '12V 5A Metal SMPS Power', qty: 1, price: '₹450', hub: 'Clean DC Power' },
-                              { name: 'Twist-Release E-Stop Button', qty: 1, price: '₹140', hub: 'Hardware Safety Cutoff' },
-                              { name: 'ABS Waterproof Enclosure', qty: 1, price: '₹320', hub: 'Dust & Oil Protection' },
-                              { name: 'DIN Rail Terminals & Wire', qty: 1, price: '₹200', hub: 'Terminal Interfacing' }
+                              { name: 'ESP32 DevKit V1 (30-Pin)', qty: 1, price: '₹450', hub: 'Edge Gateway WiFi/BLE', vendor: 'Robu.in', url: 'https://robu.in/?s=ESP32+DevKit+V1' },
+                              { name: '4-Channel Relay (Opto-Isolated)', qty: 1, price: '₹180', hub: 'Pneumatics & Motor SSR', vendor: 'Quartz Comp.', url: 'https://robu.in/?s=4+channel+relay' },
+                              { name: 'Inductive Proximity (LJ12A3)', qty: 1, price: '₹190', hub: 'Industrial Limit Sensing', vendor: 'Robu.in', url: 'https://robu.in/?s=LJ12A3' },
+                              { name: 'IR Obstacle Sensor (FC-51)', qty: 1, price: '₹50', hub: 'Pipe Arrival Detection', vendor: 'Robu.in', url: 'https://robu.in/?s=FC-51+IR+sensor' },
+                              { name: '12V 5A Metal SMPS Power', qty: 1, price: '₹450', hub: 'Clean DC Power Rail', vendor: 'Amazon India', url: 'https://www.amazon.in/s?k=12V+5A+SMPS' },
+                              { name: 'Twist-Release E-Stop Button', qty: 1, price: '₹140', hub: 'Hardware Safety Cutoff', vendor: 'Robu.in', url: 'https://robu.in/?s=Emergency+stop+push+button' },
+                              { name: 'ABS Waterproof Enclosure', qty: 1, price: '₹320', hub: 'Dust & Oil Protection', vendor: 'Robu.in', url: 'https://robu.in/?s=IP65+ABS+enclosure' },
+                              { name: 'DIN Rail Terminals & Wire', qty: 1, price: '₹200', hub: 'Clean Panel Interfacing', vendor: 'Local Hub', url: 'https://robu.in/?s=DIN+rail+terminal' }
                             ].map((item, idx) => (
-                              <tr key={idx} style={{ borderTop: '1px solid rgba(255,255,255,0.05)', color: '#cbd5e1' }}>
-                                <td style={{ padding: '7px 10px', fontWeight: 600, color: '#ffffff' }}>{item.name}</td>
-                                <td style={{ padding: '7px 6px' }}>{item.qty}</td>
-                                <td style={{ padding: '7px 10px', color: '#34d399', fontWeight: 700 }}>{item.price}</td>
-                                <td style={{ padding: '7px 10px', color: '#94a3b8' }}>{item.hub}</td>
+                              <tr key={idx} style={{ borderTop: '1px solid rgba(255,255,255,0.06)', color: '#cbd5e1' }}>
+                                <td style={{ padding: '10px 14px', fontWeight: 600, color: '#ffffff' }}>{item.name}</td>
+                                <td style={{ padding: '10px 8px' }}>{item.qty}</td>
+                                <td style={{ padding: '10px 14px', color: '#34d399', fontWeight: 700 }}>{item.price}</td>
+                                <td style={{ padding: '10px 14px', color: '#94a3b8' }}>{item.hub}</td>
+                                <td style={{ padding: '10px 14px', textAlign: 'right' }}>
+                                  <a
+                                    href={item.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    style={{
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: 4,
+                                      color: '#38bdf8',
+                                      textDecoration: 'none',
+                                      background: 'rgba(56, 189, 248, 0.12)',
+                                      padding: '4px 9px',
+                                      borderRadius: 6,
+                                      fontWeight: 600,
+                                      fontSize: 11
+                                    }}
+                                  >
+                                    <span>{item.vendor} Buy Now</span>
+                                    <ExternalLink size={11} />
+                                  </a>
+                                </td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
                       </div>
 
-                      <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+                      <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
                         <button
-                          onClick={() => alert("BOM exported to CSV & WhatsApp purchase list generated!")}
+                          type="button"
+                          onClick={() => {
+                            setOrderKitSuccess(true);
+                          }}
                           className="btn-book-demo"
-                          style={{ padding: '7px 16px', fontSize: 12 }}
+                          style={{
+                            padding: '8px 18px',
+                            fontSize: 12,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            color: '#ffffff'
+                          }}
                         >
-                          ⬇ Export 1-Click Sourcing CSV
+                          <ShoppingCart size={13} />
+                          <span>1-Click Order Full Kit (₹1,980)</span>
                         </button>
+
                         <button
+                          type="button"
+                          onClick={() => {
+                            const csvContent = "data:text/csv;charset=utf-8,Component,Qty,Price,Vendor\n" +
+                              "ESP32 DevKit V1,1,450,Robu.in\n4-Channel Relay,1,180,Quartz\nInductive Proximity LJ12A3,1,190,Robu.in\nIR Sensor FC-51,1,50,Robu.in\n12V SMPS Power,1,450,Amazon.in\nE-Stop Button,1,140,Robu.in\nABS IP65 Enclosure,1,320,Robu.in\nDIN Rail Terminals,1,200,Local Hub\nTOTAL,8,1980,Complete Retrofit Kit";
+                            const encodedUri = encodeURI(csvContent);
+                            const link = document.createElement("a");
+                            link.setAttribute("href", encodedUri);
+                            link.setAttribute("download", "UdyamUtkarsh_BOM_Sourcing_List.csv");
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                          }}
+                          style={{
+                            background: 'rgba(255,255,255,0.06)',
+                            border: '1px solid rgba(255,255,255,0.15)',
+                            color: '#cbd5e1',
+                            padding: '7px 14px',
+                            borderRadius: 9999,
+                            fontSize: 12,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 5
+                          }}
+                        >
+                          <Download size={12} />
+                          <span>Download CSV</span>
+                        </button>
+
+                        <button
+                          type="button"
                           onClick={() => setSelectedFeature(4)}
                           style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#cbd5e1', padding: '7px 14px', borderRadius: 9999, fontSize: 12, cursor: 'pointer' }}
                         >
@@ -1131,41 +1413,53 @@ export default function App() {
                     </div>
                   )}
 
-                  {/* FEATURE 4: TECH BLUEPRINT (FIRMWARE & WIRING) */}
+                  {/* FEATURE 4: TECH BLUEPRINT (FIRMWARE & DIGITAL WORKFLOWS) */}
                   {selectedFeature === 4 && (
                     <div style={{ background: '#0b1424', borderRadius: 12, padding: 18, border: '1px solid rgba(255,255,255,0.08)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                        <span style={{ fontSize: 13, fontWeight: 800, color: '#f5e482' }}>⚡ Auto-Firmware (C++) & Pin-to-Pin Wiring</span>
+                        <div>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: '#f5e482' }}>⚡ Auto-Generated Digital Workflows & C++ Firmware</span>
+                          <span style={{ fontSize: 11, color: '#94a3b8', display: 'block' }}>Zero expensive automation engineers needed — Instant Pin-to-Pin Wiring + Firmware</span>
+                        </div>
                         <div style={{ display: 'flex', gap: 6 }}>
-                          <span style={{ fontSize: 10, background: 'rgba(34,197,94,0.15)', color: '#22c55e', padding: '2px 6px', borderRadius: 4 }}>ISO 13849 Checks Passed</span>
-                          <span style={{ fontSize: 10, background: 'rgba(56,189,248,0.15)', color: '#38bdf8', padding: '2px 6px', borderRadius: 4 }}>Watchdog Active</span>
+                          <span style={{ fontSize: 10, background: 'rgba(34,197,94,0.15)', color: '#22c55e', padding: '2px 6px', borderRadius: 4, fontWeight: 700 }}>ISO 13849 Certified</span>
+                          <span style={{ fontSize: 10, background: 'rgba(56,189,248,0.15)', color: '#38bdf8', padding: '2px 6px', borderRadius: 4, fontWeight: 700 }}>Watchdog Active</span>
                         </div>
                       </div>
 
-                      {/* Pin Mapping Matrix */}
+                      {/* Pin Mapping Matrix & Digital Workflow */}
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 12 }}>
-                        <div style={{ background: 'rgba(255,255,255,0.03)', padding: 8, borderRadius: 6, textAlign: 'center' }}>
-                          <div style={{ fontSize: 10, color: '#ef4444', fontWeight: 800 }}>GPIO 13</div>
-                          <div style={{ fontSize: 11, color: '#ffffff' }}>E-Stop (ISR)</div>
+                        <div style={{ background: 'rgba(255,255,255,0.03)', padding: 8, borderRadius: 6, textAlign: 'center', border: '1px solid rgba(239,68,68,0.2)' }}>
+                          <div style={{ fontSize: 10, color: '#ef4444', fontWeight: 800 }}>GPIO 13 (ISR)</div>
+                          <div style={{ fontSize: 11, color: '#ffffff' }}>E-Stop Mushroom</div>
+                          <div style={{ fontSize: 9.5, color: '#94a3b8' }}>Pin 13 → NC Contact</div>
                         </div>
-                        <div style={{ background: 'rgba(255,255,255,0.03)', padding: 8, borderRadius: 6, textAlign: 'center' }}>
-                          <div style={{ fontSize: 10, color: '#22c55e', fontWeight: 800 }}>GPIO 14</div>
-                          <div style={{ fontSize: 11, color: '#ffffff' }}>Start Button</div>
+                        <div style={{ background: 'rgba(255,255,255,0.03)', padding: 8, borderRadius: 6, textAlign: 'center', border: '1px solid rgba(34,197,94,0.2)' }}>
+                          <div style={{ fontSize: 10, color: '#22c55e', fontWeight: 800 }}>GPIO 14 (IN)</div>
+                          <div style={{ fontSize: 11, color: '#ffffff' }}>Start Cycle Button</div>
+                          <div style={{ fontSize: 9.5, color: '#94a3b8' }}>Pin 14 → Green PB</div>
                         </div>
-                        <div style={{ background: 'rgba(255,255,255,0.03)', padding: 8, borderRadius: 6, textAlign: 'center' }}>
-                          <div style={{ fontSize: 10, color: '#38bdf8', fontWeight: 800 }}>GPIO 27</div>
-                          <div style={{ fontSize: 11, color: '#ffffff' }}>IR Pipe Detect</div>
+                        <div style={{ background: 'rgba(255,255,255,0.03)', padding: 8, borderRadius: 6, textAlign: 'center', border: '1px solid rgba(56,189,248,0.2)' }}>
+                          <div style={{ fontSize: 10, color: '#38bdf8', fontWeight: 800 }}>GPIO 18 / 19</div>
+                          <div style={{ fontSize: 11, color: '#ffffff' }}>Relay IN1 & IN2</div>
+                          <div style={{ fontSize: 9.5, color: '#94a3b8' }}>Pin 18 → Cut Motor</div>
                         </div>
-                        <div style={{ background: 'rgba(255,255,255,0.03)', padding: 8, borderRadius: 6, textAlign: 'center' }}>
-                          <div style={{ fontSize: 10, color: '#f5e482', fontWeight: 800 }}>GPIO 32/33</div>
-                          <div style={{ fontSize: 11, color: '#ffffff' }}>Relay Cut & Clamp</div>
+                        <div style={{ background: 'rgba(255,255,255,0.03)', padding: 8, borderRadius: 6, textAlign: 'center', border: '1px solid rgba(245,228,130,0.2)' }}>
+                          <div style={{ fontSize: 10, color: '#f5e482', fontWeight: 800 }}>GPIO 27 (INPUT)</div>
+                          <div style={{ fontSize: 11, color: '#ffffff' }}>Inductive Proximity</div>
+                          <div style={{ fontSize: 9.5, color: '#94a3b8' }}>Pin 27 → Sensor OUT</div>
                         </div>
                       </div>
 
                       {/* Code Snippet Box */}
-                      <div className="gcode-code-box" style={{ maxHeight: 150, fontSize: 11 }}>
+                      <div className="gcode-code-box" style={{ maxHeight: 115, fontSize: 11 }}>
 {`// UdyamUtkarsh ISO 13849 Compliant Machine Controller
 #include <esp_task_wdt.h>
+#define PIN_RELAY_CUT 18     // GPIO 18 -> Relay IN1
+#define PIN_RELAY_CLAMP 19   // GPIO 19 -> Relay IN2
+#define PIN_ESTOP 13         // GPIO 13 -> E-Stop (Hardware Interrupt)
+#define PIN_PROXIMITY 27     // GPIO 27 -> Inductive Proximity
+
 void IRAM_ATTR handleEmergencyStop() {
     digitalWrite(PIN_RELAY_CUT, HIGH);   // Immediate hardware cutoff
     digitalWrite(PIN_RELAY_CLAMP, HIGH); // De-energize solenoid
@@ -1173,14 +1467,69 @@ void IRAM_ATTR handleEmergencyStop() {
 void setup() {
     pinMode(PIN_RELAY_CUT, OUTPUT);
     digitalWrite(PIN_RELAY_CUT, HIGH);   // Failsafe boot OFF
-    attachInterrupt(digitalPinToInterrupt(13), handleEmergencyStop, FALLING);
+    attachInterrupt(digitalPinToInterrupt(PIN_ESTOP), handleEmergencyStop, FALLING);
 }`}
                       </div>
 
-                      <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
+                      {/* Regional Video Guide & QR Code Banner (Vention's Professional Training) */}
+                      <div style={{
+                        marginTop: 12,
+                        background: 'linear-gradient(135deg, rgba(245, 228, 130, 0.08) 0%, rgba(13, 23, 38, 0.8) 100%)',
+                        border: '1px solid rgba(245, 228, 130, 0.3)',
+                        borderRadius: 10,
+                        padding: '10px 14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 12
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          {/* Mini QR Code Visual */}
+                          <div style={{
+                            background: '#ffffff',
+                            padding: 4,
+                            borderRadius: 6,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.4)'
+                          }}>
+                            <QrCode size={34} color="#0d1726" />
+                          </div>
+                          <div>
+                            <div style={{ fontSize: 11.5, fontWeight: 800, color: '#f5e482' }}>
+                              Regional Video Guides / ITI Training (Hindi)
+                            </div>
+                            <div style={{ fontSize: 10.5, color: '#cbd5e1' }}>
+                              Scan QR on machine or watch 2-minute video in Hindi so local ITI students or electricians install with zero errors.
+                            </div>
+                          </div>
+                        </div>
+
                         <button
+                          type="button"
+                          onClick={() => setShowVideoGuideModal(true)}
+                          className="btn-book-demo"
+                          style={{
+                            padding: '6px 14px',
+                            fontSize: 11.5,
+                            whiteSpace: 'nowrap',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 5
+                          }}
+                        >
+                          <Video size={13} />
+                          <span>Watch 2-Min Video Guide</span>
+                        </button>
+                      </div>
+
+                      {/* Action Links */}
+                      <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
+                        <button
+                          type="button"
                           onClick={() => {
-                            navigator.clipboard.writeText("// UdyamUtkarsh Complete Arduino Firmware...");
+                            navigator.clipboard.writeText(`// UdyamUtkarsh ISO 13849 Compliant Machine Controller\n#include <esp_task_wdt.h>\n#define PIN_RELAY_CUT 18\n#define PIN_RELAY_CLAMP 19\n#define PIN_ESTOP 13\n#define PIN_PROXIMITY 27\n\nvoid IRAM_ATTR handleEmergencyStop() {\n    digitalWrite(PIN_RELAY_CUT, HIGH);\n    digitalWrite(PIN_RELAY_CLAMP, HIGH);\n}\nvoid setup() {\n    pinMode(PIN_RELAY_CUT, OUTPUT);\n    pinMode(PIN_RELAY_CLAMP, OUTPUT);\n    digitalWrite(PIN_RELAY_CUT, HIGH);\n    digitalWrite(PIN_RELAY_CLAMP, HIGH);\n    attachInterrupt(digitalPinToInterrupt(PIN_ESTOP), handleEmergencyStop, FALLING);\n}\nvoid loop() {\n    // Automated Cycle\n}`);
                             setCopiedCode(true);
                             setTimeout(() => setCopiedCode(false), 2000);
                           }}
@@ -1189,6 +1538,41 @@ void setup() {
                         >
                           <Copy size={13} />
                           <span>{copiedCode ? '✓ Copied to Clipboard!' : 'Copy Arduino .ino Code'}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const blob = new Blob([`// UdyamUtkarsh C++ Firmware\n// Pin 18: Cut Relay\n// Pin 19: Clamp Relay\n// Pin 13: E-Stop\n// Pin 27: Proximity Sensor\nvoid setup() {} void loop() {}`], { type: 'text/plain' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `UdyamUtkarsh_Firmware_${intakeData.machineType.replace(/\s+/g, '_')}.ino`;
+                            a.click();
+                          }}
+                          style={{
+                            background: 'rgba(255,255,255,0.06)',
+                            border: '1px solid rgba(255,255,255,0.15)',
+                            color: '#cbd5e1',
+                            padding: '6px 14px',
+                            borderRadius: 9999,
+                            fontSize: 12,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 5
+                          }}
+                        >
+                          <Download size={12} />
+                          <span>Download .ino File</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setSelectedFeature(5)}
+                          style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#cbd5e1', padding: '6px 14px', borderRadius: 9999, fontSize: 12, cursor: 'pointer' }}
+                        >
+                          Next: AI Vision to G-Code →
                         </button>
                       </div>
                     </div>
@@ -1237,12 +1621,12 @@ void setup() {
                         </label>
                       </div>
 
-                      {/* 2D Toolpath Canvas & Coordinates Preview */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '170px 1fr', gap: 12, marginBottom: 12 }}>
+                      {/* 2D Toolpath Canvas & Coordinates Preview (Spacious) */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: 18, marginBottom: 16 }}>
                         {/* 2D SVG Toolpath Visualizer */}
-                        <div style={{ background: '#050a12', borderRadius: 8, padding: 10, border: '1px solid rgba(255,255,255,0.06)', textAlign: 'center' }}>
-                          <div style={{ fontSize: 10, color: '#94a3b8', marginBottom: 4, fontWeight: 700 }}>TOOLPATH VECTOR CANVAS</div>
-                          <svg viewBox="-80 -80 160 160" style={{ width: '100%', height: 110 }}>
+                        <div style={{ background: '#050a12', borderRadius: 10, padding: 14, border: '1px solid rgba(255,255,255,0.08)', textAlign: 'center' }}>
+                          <div style={{ fontSize: 10.5, color: '#94a3b8', marginBottom: 8, fontWeight: 700, letterSpacing: 0.5 }}>TOOLPATH VECTOR CANVAS</div>
+                          <svg viewBox="-80 -80 160 160" style={{ width: '100%', height: 160 }}>
                             {/* Outer Circle Cut */}
                             <circle cx="0" cy="0" r="60" fill="none" stroke="#f5e482" strokeWidth="2.5" strokeDasharray="3 2" />
                             {/* Inner Bore */}
@@ -1256,11 +1640,11 @@ void setup() {
                             <line x1="-70" y1="0" x2="70" y2="0" stroke="rgba(255,255,255,0.15)" strokeWidth="0.8" />
                             <line x1="0" y1="-70" x2="0" y2="70" stroke="rgba(255,255,255,0.15)" strokeWidth="0.8" />
                           </svg>
-                          <div style={{ fontSize: 9.5, color: '#f5e482', fontWeight: 700 }}>Outer: 120mm | Holes: 4x M10</div>
+                          <div style={{ fontSize: 11, color: '#f5e482', fontWeight: 700, marginTop: 6 }}>Outer: 120mm | Holes: 4x M10</div>
                         </div>
 
                         {/* Generated G-Code snippet */}
-                        <div className="gcode-code-box" style={{ maxHeight: 130 }}>
+                        <div className="gcode-code-box" style={{ maxHeight: 200, fontSize: 12, lineHeight: 1.6 }}>
                           {gcodeResult?.gcode || '; Generating G-Code...'}
                         </div>
                       </div>
@@ -1291,87 +1675,255 @@ void setup() {
                     </div>
                   )}
 
-                  {/* FEATURE 6: SMARTPHONE AS HMI (ZERO LAPTOP REQUIREMENT) */}
+                  {/* FEATURE 6: SMARTPHONE AS HMI & BASIC SMARTPHONE ANALYTICS (DE-CLUSTERED SPACIOUS 2-COL) */}
                   {selectedFeature === 6 && (
-                    <div style={{ background: '#0b1424', borderRadius: 12, padding: 18, border: '1px solid rgba(255,255,255,0.08)' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                        <span style={{ fontSize: 13, fontWeight: 800, color: '#22c55e' }}>📱 "Smartphone as HMI" (Zero Laptop Required)</span>
-                        <span style={{ fontSize: 11, background: 'rgba(34,197,94,0.15)', color: '#22c55e', padding: '2px 8px', borderRadius: 6 }}>
-                          ● SoftAP: 192.168.4.1
+                    <div style={{ background: '#0b1424', borderRadius: 14, padding: 24, border: '1px solid rgba(255,255,255,0.08)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                        <div>
+                          <span style={{ fontSize: 15, fontWeight: 800, color: '#22c55e' }}>📱 "Smartphone as HMI" & Edge Analytics (Zero-Cloud)</span>
+                          <span style={{ fontSize: 12, color: '#94a3b8', display: 'block', marginTop: 2 }}>
+                            Microcontroller broadcasts local Wi-Fi SoftAP • Factory owner pays ₹0 for cloud or touchscreen hardware
+                          </span>
+                        </div>
+                        <span style={{ fontSize: 11.5, background: 'rgba(34,197,94,0.15)', color: '#22c55e', padding: '4px 12px', borderRadius: 8, fontWeight: 800 }}>
+                          ● SoftAP IP: 192.168.4.1
                         </span>
                       </div>
 
-                      {/* Phone Frame Mockup */}
-                      <div className="hmi-phone-mockup">
-                        <div className="hmi-phone-notch">
-                          <div className="hmi-phone-camera" />
+                      {/* Spacious 2-Column Showcase */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 340px) 1fr', gap: 32, alignItems: 'start' }}>
+                        {/* Column 1: Phone Frame Mockup */}
+                        <div>
+                          <div className="hmi-phone-mockup" style={{ width: 330, margin: '0 auto' }}>
+                            <div className="hmi-phone-notch">
+                              <div className="hmi-phone-camera" />
+                            </div>
+
+                            <div className="hmi-phone-screen" style={{ padding: '16px 14px' }}>
+                              <div className="hmi-status-bar" style={{ marginBottom: 12 }}>
+                                <span>📶 ESP32-HOTSPOT</span>
+                                <span style={{ color: '#22c55e', fontWeight: 800 }}>CONNECTED</span>
+                                <span>100% 🔋</span>
+                              </div>
+
+                              <div style={{ textAlign: 'center', margin: '8px 0 12px 0' }}>
+                                <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, letterSpacing: 0.5 }}>OPERATOR TERMINAL</div>
+                                <div style={{ fontSize: 16, fontWeight: 900, color: '#ffffff' }}>PVC Cutter Unit #04</div>
+                              </div>
+
+                              {/* Phone Tabs: Controls vs Analytics */}
+                              <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: 6,
+                                background: 'rgba(255, 255, 255, 0.08)',
+                                padding: 4,
+                                borderRadius: 10,
+                                marginBottom: 14
+                              }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setHmiActiveTab('controls')}
+                                  style={{
+                                    background: hmiActiveTab === 'controls' ? '#22c55e' : 'transparent',
+                                    color: hmiActiveTab === 'controls' ? '#040810' : '#cbd5e1',
+                                    border: 'none',
+                                    borderRadius: 7,
+                                    padding: '7px 0',
+                                    fontSize: 11,
+                                    fontWeight: 800,
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s'
+                                  }}
+                                >
+                                  🕹️ Controls
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setHmiActiveTab('analytics')}
+                                  style={{
+                                    background: hmiActiveTab === 'analytics' ? '#22c55e' : 'transparent',
+                                    color: hmiActiveTab === 'analytics' ? '#040810' : '#cbd5e1',
+                                    border: 'none',
+                                    borderRadius: 7,
+                                    padding: '7px 0',
+                                    fontSize: 11,
+                                    fontWeight: 800,
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s'
+                                  }}
+                                >
+                                  📈 Analytics
+                                </button>
+                              </div>
+
+                              {/* TAB 1: CONTROLS */}
+                              {hmiActiveTab === 'controls' && (
+                                <div>
+                                  {/* Live Stats Row */}
+                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, margin: '10px 0' }}>
+                                    <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: 10, padding: 8, textAlign: 'center' }}>
+                                      <div style={{ fontSize: 9.5, color: '#94a3b8', fontWeight: 700 }}>PIECES CUT</div>
+                                      <div style={{ fontSize: 20, fontWeight: 900, color: '#f5e482', marginTop: 2 }}>{hmiCycles}</div>
+                                    </div>
+                                    <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: 10, padding: 8, textAlign: 'center' }}>
+                                      <div style={{ fontSize: 9.5, color: '#94a3b8', fontWeight: 700 }}>STATUS</div>
+                                      <div style={{ fontSize: 12, fontWeight: 800, color: hmiSimRunning ? '#22c55e' : '#38bdf8', marginTop: 4 }}>
+                                        {hmiSimRunning ? '⚡ CUTTING...' : '✓ READY'}
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Length Adjustment Slider */}
+                                  <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 10, padding: 10, margin: '12px 0' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#cbd5e1', marginBottom: 6 }}>
+                                      <span>Cut Length Target:</span>
+                                      <strong style={{ color: '#f5e482' }}>{hmiCutLength} mm</strong>
+                                    </div>
+                                    <input
+                                      type="range"
+                                      min="500"
+                                      max="3000"
+                                      step="50"
+                                      value={hmiCutLength}
+                                      onChange={e => setHmiCutLength(Number(e.target.value))}
+                                      style={{ width: '100%', accentColor: '#22c55e' }}
+                                    />
+                                  </div>
+
+                                  {/* Operator Action Buttons */}
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
+                                    <button
+                                      type="button"
+                                      onClick={triggerHmiCycle}
+                                      disabled={hmiSimRunning || eStopTripped}
+                                      className="hmi-btn-start"
+                                      style={{ padding: 12 }}
+                                    >
+                                      <Play size={15} fill="#ffffff" />
+                                      <span>{hmiSimRunning ? 'Executing Cut Stroke...' : 'START CUT CYCLE'}</span>
+                                    </button>
+
+                                    <button
+                                      type="button"
+                                      onClick={() => setEStopTripped(!eStopTripped)}
+                                      className="hmi-btn-estop"
+                                      style={{ padding: 10 }}
+                                    >
+                                      <AlertTriangle size={15} />
+                                      <span>{eStopTripped ? 'RESET EMERGENCY STOP' : 'EMERGENCY STOP'}</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* TAB 2: MINI PHONE ANALYTICS */}
+                              {hmiActiveTab === 'analytics' && (
+                                <div style={{ animation: 'fadeIn 0.2s ease' }}>
+                                  <div style={{ background: 'rgba(34, 197, 94, 0.12)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 10, padding: 10, textAlign: 'center', marginBottom: 10 }}>
+                                    <div style={{ fontSize: 9.5, color: '#86efac', fontWeight: 700 }}>PIPES CUT TODAY</div>
+                                    <div style={{ fontSize: 26, fontWeight: 900, color: '#4ade80' }}>
+                                      {450 + (hmiCycles - 148)} <span style={{ fontSize: 13, fontWeight: 600 }}>Units</span>
+                                    </div>
+                                    <div style={{ fontSize: 10, color: '#cbd5e1', marginTop: 2 }}>Target: 500 Units (90% Met)</div>
+                                  </div>
+
+                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: 10 }}>
+                                    <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 8, padding: 6, textAlign: 'center' }}>
+                                      <div style={{ fontSize: 9, color: '#94a3b8' }}>SPEED</div>
+                                      <div style={{ fontSize: 13, fontWeight: 800, color: '#f5e482' }}>56 / Hr</div>
+                                    </div>
+                                    <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 8, padding: 6, textAlign: 'center' }}>
+                                      <div style={{ fontSize: 9, color: '#94a3b8' }}>UPTIME</div>
+                                      <div style={{ fontSize: 13, fontWeight: 800, color: '#38bdf8' }}>98.4%</div>
+                                    </div>
+                                  </div>
+
+                                  <div style={{ fontSize: 9.5, color: '#94a3b8', textAlign: 'center', lineHeight: 1.4 }}>
+                                    Zero Cloud Charges. Stored inside ESP32 SPI Flash.
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         </div>
 
-                        <div className="hmi-phone-screen">
-                          <div>
-                            <div className="hmi-status-bar">
-                              <span>📶 ESP32-HOTSPOT</span>
-                              <span style={{ color: '#22c55e', fontWeight: 800 }}>CONNECTED</span>
-                              <span>100% 🔋</span>
-                            </div>
-
-                            <div style={{ textAlign: 'center', margin: '12px 0 8px 0' }}>
-                              <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 700 }}>UDYAMUTKARSH OPERATOR HMI</div>
-                              <div style={{ fontSize: 15, fontWeight: 900, color: '#ffffff' }}>PVC Cutter Unit #04</div>
-                            </div>
-
-                            {/* Live Stats Row */}
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, margin: '10px 0' }}>
-                              <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 10, padding: 8, textAlign: 'center' }}>
-                                <div style={{ fontSize: 9.5, color: '#94a3b8' }}>PIECES CUT</div>
-                                <div style={{ fontSize: 20, fontWeight: 900, color: '#f5e482' }}>{hmiCycles}</div>
-                              </div>
-                              <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 10, padding: 8, textAlign: 'center' }}>
-                                <div style={{ fontSize: 9.5, color: '#94a3b8' }}>STATUS</div>
-                                <div style={{ fontSize: 12, fontWeight: 800, color: hmiSimRunning ? '#22c55e' : '#38bdf8', marginTop: 4 }}>
-                                  {hmiSimRunning ? 'CUTTING...' : 'READY'}
+                        {/* Column 2: Spacious Live Analytics Dashboard & Enterprise Vocabulary */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                          {/* Live Production Analytics KPI Card */}
+                          <div style={{
+                            background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(13, 23, 38, 0.9) 100%)',
+                            border: '1px solid rgba(34, 197, 94, 0.35)',
+                            borderRadius: 14,
+                            padding: '18px 22px'
+                          }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                              <div>
+                                <div style={{ fontSize: 11, color: '#86efac', fontWeight: 800, letterSpacing: 0.5 }}>
+                                  Vention's Machine Analytics (Basic Smartphone Analytics)
+                                </div>
+                                <div style={{ fontSize: 26, fontWeight: 900, color: '#4ade80', marginTop: 4 }}>
+                                  {450 + (hmiCycles - 148)} <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Total Pipes Cut Today</span>
                                 </div>
                               </div>
+                              <span style={{ fontSize: 11, background: 'rgba(34, 197, 94, 0.2)', color: '#4ade80', padding: '3px 10px', borderRadius: 6, fontWeight: 800 }}>
+                                90% Shift Goal
+                              </span>
                             </div>
 
-                            {/* Length Adjustment Slider */}
-                            <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: 10, margin: '8px 0' }}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#cbd5e1', marginBottom: 4 }}>
-                                <span>Cut Length:</span>
-                                <strong style={{ color: '#f5e482' }}>{hmiCutLength} mm</strong>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginTop: 12 }}>
+                              <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '10px 12px', textAlign: 'center' }}>
+                                <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700 }}>SHIFT VELOCITY</div>
+                                <div style={{ fontSize: 16, fontWeight: 800, color: '#f5e482', marginTop: 2 }}>56 Units/Hr</div>
                               </div>
-                              <input
-                                type="range"
-                                min="500"
-                                max="3000"
-                                step="50"
-                                value={hmiCutLength}
-                                onChange={e => setHmiCutLength(Number(e.target.value))}
-                                style={{ width: '100%', accentColor: '#22c55e' }}
-                              />
+                              <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '10px 12px', textAlign: 'center' }}>
+                                <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700 }}>MACHINE UPTIME</div>
+                                <div style={{ fontSize: 16, fontWeight: 800, color: '#38bdf8', marginTop: 2 }}>98.4% (5.4h)</div>
+                              </div>
+                              <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '10px 12px', textAlign: 'center' }}>
+                                <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700 }}>REJECT / SCRAP</div>
+                                <div style={{ fontSize: 16, fontWeight: 800, color: '#ef4444', marginTop: 2 }}>0.4% (2 pcs)</div>
+                              </div>
+                              <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '10px 12px', textAlign: 'center' }}>
+                                <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700 }}>CLOUD BILL</div>
+                                <div style={{ fontSize: 16, fontWeight: 800, color: '#22c55e', marginTop: 2 }}>₹0 / Month</div>
+                              </div>
                             </div>
                           </div>
 
-                          {/* Operator Action Buttons */}
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
-                            <button
-                              type="button"
-                              onClick={triggerHmiCycle}
-                              disabled={hmiSimRunning || eStopTripped}
-                              className="hmi-btn-start"
-                            >
-                              <Play size={16} fill="#ffffff" />
-                              <span>{hmiSimRunning ? 'Executing Cut Stroke...' : 'START CUT CYCLE'}</span>
-                            </button>
+                          {/* Category 3: Enterprise Pitch Callouts (Spacious & Clean) */}
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                            {/* Callout 1: Connected Worker Terminal */}
+                            <div className="tech-vocab-card cyan">
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                                <div style={{ background: 'rgba(56, 189, 248, 0.15)', padding: 7, borderRadius: 8 }}>
+                                  <Smartphone size={16} color="#38bdf8" />
+                                </div>
+                                <div>
+                                  <strong style={{ fontSize: 13, color: '#38bdf8', display: 'block' }}>Connected Worker Terminal</strong>
+                                  <span style={{ fontSize: 10.5, color: '#94a3b8' }}>Tulip's Feature Equivalent</span>
+                                </div>
+                              </div>
+                              <p style={{ fontSize: 11.5, color: '#cbd5e1', lineHeight: 1.5, margin: 0, fontStyle: 'italic' }}>
+                                "Sir, we don't force users to buy $1000 HMI screens. Using the ESP32's local Wi-Fi, the operator's ₹10,000 Android phone becomes our Connected Worker Terminal."
+                              </p>
+                            </div>
 
-                            <button
-                              type="button"
-                              onClick={() => setEStopTripped(!eStopTripped)}
-                              className="hmi-btn-estop"
-                            >
-                              <AlertTriangle size={15} />
-                              <span>{eStopTripped ? 'RESET EMERGENCY STOP' : 'EMERGENCY STOP'}</span>
-                            </button>
+                            {/* Callout 2: Edge Gateway Connectivity */}
+                            <div className="tech-vocab-card emerald">
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                                <div style={{ background: 'rgba(52, 211, 153, 0.15)', padding: 7, borderRadius: 8 }}>
+                                  <Cpu size={16} color="#34d399" />
+                                </div>
+                                <div>
+                                  <strong style={{ fontSize: 13, color: '#34d399', display: 'block' }}>Edge Gateway Connectivity</strong>
+                                  <span style={{ fontSize: 10.5, color: '#94a3b8' }}>Tulip & Vention's Edge IO</span>
+                                </div>
+                              </div>
+                              <p style={{ fontSize: 11.5, color: '#cbd5e1', lineHeight: 1.5, margin: 0, fontStyle: 'italic' }}>
+                                "Global companies sell proprietary Edge boxes for $500. We achieve the exact same Edge Gateway Connectivity using a ₹450 open-source ESP32 microcontroller."
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1445,90 +1997,6 @@ void setup() {
                       </div>
                     </div>
                   )}
-                </div>
-
-                {/* Right Inspector Panel */}
-                <div className="studio-right-inspector">
-                  <div style={{ display: 'flex', gap: 12, borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: 8, marginBottom: 12 }}>
-                    <strong style={{ color: '#ffffff' }}>Telemetry</strong>
-                    <span style={{ color: '#64748b' }}>Specs</span>
-                  </div>
-
-                  <div style={{ marginBottom: 14 }}>
-                    <label style={{ color: '#94a3b8', fontSize: 10.5, display: 'block', marginBottom: 4 }}>ACTIVE SUBSYSTEM</label>
-                    <div style={{ background: 'rgba(255,255,255,0.06)', padding: '6px 8px', borderRadius: 6, color: '#f5e482', fontWeight: 700 }}>
-                      {selectedFeature === 1 && 'Smart Ask Parser'}
-                      {selectedFeature === 2 && 'ROI Cost Crusher'}
-                      {selectedFeature === 3 && 'BOM Sourcing Hub'}
-                      {selectedFeature === 4 && 'ISO 13849 Compiler'}
-                      {selectedFeature === 5 && 'Gemini Vision Engine'}
-                      {selectedFeature === 6 && 'ESP32 SoftAP WebServer'}
-                      {selectedFeature === 7 && 'Fitter Dispatch SLA'}
-                    </div>
-                  </div>
-
-                  <div style={{ marginBottom: 14 }}>
-                    <label style={{ color: '#94a3b8', fontSize: 10.5, display: 'block', marginBottom: 4 }}>
-                      {selectedFeature === 1 && 'INPUT VALIDATION'}
-                      {selectedFeature === 2 && 'RETROFIT SCALE'}
-                      {selectedFeature === 3 && 'SOURCING HUBS'}
-                      {selectedFeature === 4 && 'CONTROLLER TARGET'}
-                      {selectedFeature === 5 && 'CUTTING TOOL'}
-                      {selectedFeature === 6 && 'NETWORK MODE'}
-                      {selectedFeature === 7 && 'DISPATCH TIME'}
-                    </label>
-                    <div style={{ color: '#ffffff', fontSize: 11, fontWeight: 600 }}>
-                      {selectedFeature === 1 && 'Verified 230V Single Phase'}
-                      {selectedFeature === 2 && `${retrofitMachineCount} Factory Machine(s)`}
-                      {selectedFeature === 3 && 'Chawri Bazar / Robu / Quartz'}
-                      {selectedFeature === 4 && 'ESP32 DevKit V1 (240MHz)'}
-                      {selectedFeature === 5 && '3.175mm 2-Flute Endmill'}
-                      {selectedFeature === 6 && 'Local SoftAP (192.168.4.1)'}
-                      {selectedFeature === 7 && '< 24 Hours On-Site SLA'}
-                    </div>
-                  </div>
-
-                  <div style={{ marginBottom: 14 }}>
-                    <label style={{ color: '#94a3b8', fontSize: 10.5, display: 'block', marginBottom: 4 }}>
-                      {selectedFeature === 1 && 'ESTIMATED BUDGET'}
-                      {selectedFeature === 2 && 'NET SAVINGS'}
-                      {selectedFeature === 3 && 'TOTAL HARDWARE'}
-                      {selectedFeature === 4 && 'WATCHDOG TIMER'}
-                      {selectedFeature === 5 && 'SPINDLE SPEED'}
-                      {selectedFeature === 6 && 'INTERFACE CAPEX'}
-                      {selectedFeature === 7 && 'VERIFICATION'}
-                    </label>
-                    <div style={{ color: '#22c55e', fontWeight: 800, fontSize: 13 }}>
-                      {selectedFeature === 1 && `₹${intakeData.budget} Target`}
-                      {selectedFeature === 2 && `₹${((45000 - 3500) * retrofitMachineCount).toLocaleString('en-IN')} (-92.2%)`}
-                      {selectedFeature === 3 && '₹1,980 (8 Components)'}
-                      {selectedFeature === 4 && '3000ms Hardware Interlock'}
-                      {selectedFeature === 5 && '12,000 RPM (PWM Controlled)'}
-                      {selectedFeature === 6 && '₹0 (Free via Mobile Wi-Fi)'}
-                      {selectedFeature === 7 && '100% Background & ITI Certified'}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label style={{ color: '#94a3b8', fontSize: 10.5, display: 'block', marginBottom: 4 }}>
-                      {selectedFeature === 1 && 'INFERENCE SPEED'}
-                      {selectedFeature === 2 && 'PAYBACK PERIOD'}
-                      {selectedFeature === 3 && 'LOCAL AVAILABILITY'}
-                      {selectedFeature === 4 && 'SAFETY STANDARD'}
-                      {selectedFeature === 5 && 'ESTIMATED CUT TIME'}
-                      {selectedFeature === 6 && 'CLIENT LATENCY'}
-                      {selectedFeature === 7 && 'WORKMANSHIP WARRANTY'}
-                    </label>
-                    <div style={{ color: '#38bdf8', fontWeight: 700, fontSize: 11 }}>
-                      {selectedFeature === 1 && '< 1.2s Real-Time Parser'}
-                      {selectedFeature === 2 && '11.4 Days (at 200 cycles/day)'}
-                      {selectedFeature === 3 && '100% In-Stock Indian Market'}
-                      {selectedFeature === 4 && 'ISO 13849 / SIL-2 Ready'}
-                      {selectedFeature === 5 && '1 min 34 sec'}
-                      {selectedFeature === 6 && '< 8ms Instant Response'}
-                      {selectedFeature === 7 && '30-Day Guarantee Included'}
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -2013,6 +2481,278 @@ void setup() {
           </div>
         </div>
       )}
+
+      {/* ===================== INDIAN MACHINE TEMPLATE LIBRARY MODAL ===================== */}
+      {showTemplateLibraryModal && (
+        <div className="tulip-modal-overlay" onClick={() => setShowTemplateLibraryModal(false)}>
+          <div className="tulip-modal-card" style={{ maxWidth: 940 }} onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={() => setShowTemplateLibraryModal(false)}>
+              <X size={18} />
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
+              <div style={{ background: 'rgba(245, 228, 130, 0.15)', color: '#f5e482', padding: 12, borderRadius: 12 }}>
+                <BookOpen size={26} />
+              </div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <h2 style={{ fontSize: 22, fontWeight: 800 }}>Indian Machine Template Library</h2>
+                  <span style={{ fontSize: 11, background: 'rgba(245, 228, 130, 0.2)', color: '#f5e482', padding: '2px 8px', borderRadius: 4, fontWeight: 700 }}>
+                    Tulip & Vention Architecture
+                  </span>
+                </div>
+                <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 3 }}>
+                  Pre-configured industrial blueprints for common Indian MSME workshop machines. Select a template to auto-populate hardware, wiring, and cost ROI.
+                </p>
+              </div>
+            </div>
+
+            {/* Template Cards Grid */}
+            <div className="template-grid">
+              {machineTemplates.map(template => (
+                <div key={template.id} className="template-card">
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                      <span className="template-category-badge">{template.category}</span>
+                      <span style={{ fontSize: 11, background: 'rgba(34, 197, 94, 0.15)', color: '#4ade80', padding: '2px 8px', borderRadius: 6, fontWeight: 800 }}>
+                        Save {template.savingsPct}%
+                      </span>
+                    </div>
+
+                    <h3 style={{ fontSize: 16, fontWeight: 800, color: '#ffffff', marginBottom: 6 }}>
+                      {template.name}
+                    </h3>
+
+                    <p style={{ fontSize: 11.5, color: '#cbd5e1', lineHeight: 1.5, marginBottom: 12 }}>
+                      {template.problem}
+                    </p>
+
+                    {/* Cost Arbitrage Comparison */}
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid rgba(255, 255, 255, 0.06)',
+                      borderRadius: 8,
+                      padding: '10px 12px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: 12
+                    }}>
+                      <div>
+                        <div style={{ fontSize: 10, color: '#94a3b8' }}>IOT RETROFIT</div>
+                        <div style={{ fontSize: 16, fontWeight: 900, color: '#22c55e' }}>₹{template.iotCost.toLocaleString('en-IN')}</div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: 10, color: '#94a3b8' }}>TRADITIONAL PLC</div>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: '#94a3b8', textDecoration: 'line-through' }}>
+                          ₹{template.plcCost.toLocaleString('en-IN')}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Inputs & Actuators Pills */}
+                    <div style={{ marginBottom: 14 }}>
+                      <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, marginBottom: 4 }}>SENSORS & ACTUATORS</div>
+                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                        {template.inputs.slice(0, 2).map((inp, idx) => (
+                          <span key={idx} style={{ fontSize: 10, background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', padding: '2px 6px', borderRadius: 4 }}>
+                            {inp}
+                          </span>
+                        ))}
+                        {template.actuators.slice(0, 1).map((act, idx) => (
+                          <span key={idx} style={{ fontSize: 10, background: 'rgba(245, 228, 130, 0.1)', color: '#f5e482', padding: '2px 6px', borderRadius: 4 }}>
+                            {act}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleLoadTemplate(template)}
+                    className="btn-book-demo"
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      fontSize: 12.5,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 6
+                    }}
+                  >
+                    <Sparkles size={14} />
+                    <span>⚡ Load Template & Auto-Configure</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===================== REGIONAL VIDEO GUIDE MODAL (HINDI ITI TRAINING) ===================== */}
+      {showVideoGuideModal && (
+        <div className="tulip-modal-overlay" onClick={() => setShowVideoGuideModal(false)}>
+          <div className="tulip-modal-card" style={{ maxWidth: 840 }} onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={() => setShowVideoGuideModal(false)}>
+              <X size={18} />
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
+              <div style={{ background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', padding: 12, borderRadius: 12 }}>
+                <Video size={26} />
+              </div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <h2 style={{ fontSize: 22, fontWeight: 800 }}>Regional Video Guide (2-Min Hindi SOP)</h2>
+                  <span style={{ fontSize: 10.5, background: 'rgba(34, 197, 94, 0.18)', color: '#22c55e', padding: '2px 8px', borderRadius: 4, fontWeight: 700 }}>
+                    ITI Electrician Training
+                  </span>
+                </div>
+                <p style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 2 }}>
+                  Grassroot installation guide for local electricians & ITI students. Zero complex English manuals needed.
+                </p>
+              </div>
+            </div>
+
+            {/* Video Player Simulation Container */}
+            <div className="video-player-container" style={{ marginBottom: 16 }}>
+              <div className="video-screen-simulation">
+                {/* Overlay Header */}
+                <div style={{ position: 'absolute', top: 12, left: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444' }} />
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#ffffff', letterSpacing: 0.5 }}>
+                    STEP {activeVideoStep} OF 4: {
+                      activeVideoStep === 1 ? '12V SMPS Power Supply Wiring' :
+                      activeVideoStep === 2 ? 'ESP32 Pin 18 & 19 to 4-Channel Relay' :
+                      activeVideoStep === 3 ? 'LJ12A3 Proximity & E-Stop Safety' :
+                      'Power-Up & Mobile SoftAP Test Cut'
+                    }
+                  </span>
+                </div>
+
+                <div style={{ position: 'absolute', top: 12, right: 14, fontSize: 11, color: '#f5e482', fontWeight: 700 }}>
+                  0{activeVideoStep * 30}:00 / 02:00 (Hindi Audio)
+                </div>
+
+                {/* Animated Graphic Center */}
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{
+                    width: 70,
+                    height: 70,
+                    borderRadius: '50%',
+                    background: 'rgba(245, 228, 130, 0.15)',
+                    border: '2px solid #f5e482',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 12px auto',
+                    cursor: 'pointer'
+                  }}>
+                    <Play size={30} fill="#f5e482" color="#f5e482" />
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: '#ffffff' }}>
+                    {activeVideoStep === 1 && '"12V SMPS ko 230V AC terminal block se connect karein"'}
+                    {activeVideoStep === 2 && '"ESP32 Pin 18 ko Relay ke IN1 terminal se jodein (Cut Motor)"'}
+                    {activeVideoStep === 3 && '"LJ12A3 Sensor ka Black wire GPIO 27 par tight karein"'}
+                    {activeVideoStep === 4 && '"Mobile Wi-Fi se jud kar Test Cut button press karein"'}
+                  </div>
+                  <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4 }}>
+                    Hindi Audio SOP • 1080p Crystal Clear ITI Demonstration
+                  </div>
+                </div>
+
+                {/* Bottom Scrub Bar */}
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
+                  <div className="video-scrub-bar">
+                    <div className="video-scrub-progress" style={{ width: `${(activeVideoStep / 4) * 100}%` }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 4 Interactive Step Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
+              {[
+                { step: 1, title: 'Step 1: 12V SMPS Power Rail', desc: 'Mains 230V AC ko SMPS L/N par aur 12V DC ko terminal busbar se connect karein.' },
+                { step: 2, title: 'Step 2: Pin 18/19 -> Relay IN1/IN2', desc: 'ESP32 GPIO 18 ko Relay IN1 (Cut Saw) aur GPIO 19 ko Solenoid Clamp se jodein.' },
+                { step: 3, title: 'Step 3: Sensors & E-Stop ISR', desc: 'LJ12A3 sensor ko GPIO 27 aur Twist-Release E-Stop button ko GPIO 13 ISR par lagayein.' },
+                { step: 4, title: 'Step 4: Phone Wi-Fi Test Cut', desc: 'Phone par "ESP32-HOTSPOT" se judkar browser mein 192.168.4.1 kholkar test run karein.' }
+              ].map(item => (
+                <div
+                  key={item.step}
+                  className={`video-step-row ${activeVideoStep === item.step ? 'active' : ''}`}
+                  onClick={() => setActiveVideoStep(item.step)}
+                >
+                  <div style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: '50%',
+                    background: activeVideoStep === item.step ? '#f5e482' : 'rgba(255,255,255,0.08)',
+                    color: activeVideoStep === item.step ? '#070d18' : '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 800,
+                    fontSize: 12
+                  }}>
+                    {item.step}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: activeVideoStep === item.step ? '#f5e482' : '#ffffff' }}>
+                      {item.title}
+                    </div>
+                    <div style={{ fontSize: 10.5, color: '#94a3b8', lineHeight: 1.3 }}>
+                      {item.desc}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom Actions */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <QrCode size={28} color="#f5e482" />
+                <span style={{ fontSize: 11, color: '#94a3b8' }}>
+                  QR Code is printed on the physical machine panel for instant technician scanning.
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button
+                  type="button"
+                  onClick={() => alert("1-Page Hindi SOP Wiring PDF downloaded!")}
+                  className="btn-book-demo"
+                  style={{ padding: '8px 16px', fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}
+                >
+                  <Download size={13} />
+                  <span>Download Hindi Wiring PDF</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => alert("WhatsApp share link copied! Sent to local electrician: +91 98765 43210")}
+                  style={{
+                    background: '#25D366',
+                    color: '#ffffff',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: 9999,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  📲 Send to Electrician via WhatsApp
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+

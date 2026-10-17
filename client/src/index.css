@@ -620,104 +620,122 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.studio-nav-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.studio-pill-tag {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: #e2e8f0;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 4px 10px;
-  border-radius: 6px;
-}
-
-.studio-tabs-row {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
-.studio-tab-item {
-  font-size: 13px;
-  font-weight: 500;
-  color: #94a3b8;
-  cursor: pointer;
-  padding: 4px 8px;
-  transition: all 0.2s ease;
-}
-
-.studio-tab-item.active {
-  color: #ffffff;
-  font-weight: 700;
-  border-bottom: 2px solid var(--accent-yellow);
-}
-
-.studio-breadcrumbs-row {
-  background: #08101e;
-  padding: 8px 18px;
+/* ========================================================================= */
+/* CLEAN STUDIO TOOLBAR & FULL-WIDTH MAIN DISPLAY (NO SIDEBAR CLUTTER)       */
+/* ========================================================================= */
+.studio-top-action-bar {
+  background: #08111f;
+  padding: 14px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 12px;
-  color: #94a3b8;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.studio-canvas-layout {
-  display: grid;
-  grid-template-columns: 200px 1fr 220px;
-  min-height: 380px;
-  background: #070d18;
+.studio-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
 }
 
-@media (max-width: 980px) {
-  .studio-canvas-layout {
-    grid-template-columns: 1fr;
-  }
+.studio-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+  animation: pulseDot 2s infinite ease-in-out;
 }
 
-.studio-left-tree {
-  background: #08111f;
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 16px;
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
 }
 
-.studio-tree-item {
-  padding: 8px 10px;
-  font-size: 12px;
+.studio-options-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.studio-option-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: #cbd5e1;
-  border-radius: 6px;
-  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.studio-tree-item.active {
-  background: rgba(255, 255, 255, 0.08);
+.studio-option-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
-  font-weight: 700;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.studio-option-btn.active {
+  background: rgba(245, 228, 130, 0.15);
+  border-color: var(--accent-yellow);
+  color: var(--accent-yellow);
+}
+
+/* Sliding Dropdown Options Panels */
+.studio-options-drawer {
+  background: #091322;
+  border-bottom: 1px solid rgba(245, 228, 130, 0.25);
+  padding: 16px 24px;
+  animation: fadeIn 0.2s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.studio-canvas-layout {
+  display: block;
+  width: 100%;
+  min-height: 420px;
+  background: #070d18;
 }
 
 .studio-center-canvas {
-  padding: 24px;
+  width: 100%;
+  padding: 24px 28px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
-.studio-right-inspector {
-  background: #08111f;
-  border-left: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 16px;
-  font-size: 12px;
+/* De-clustered Tech Vocabulary & Enterprise Pitch Cards */
+.tech-vocab-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px 20px;
+  transition: all 0.25s ease;
+}
+
+.tech-vocab-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.tech-vocab-card.cyan {
+  border-color: rgba(56, 189, 248, 0.25);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.05) 0%, rgba(8, 17, 31, 0.8) 100%);
+}
+
+.tech-vocab-card.emerald {
+  border-color: rgba(52, 211, 153, 0.25);
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.05) 0%, rgba(8, 17, 31, 0.8) 100%);
 }
 
 /* Floating Chat Bubble */
@@ -1020,4 +1038,121 @@ body {
   border-radius: 9999px;
   transition: width 0.4s ease;
 }
+
+/* 5. Indian Machine Template Library Modal */
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+  max-height: 540px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.template-card {
+  background: #091220;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.template-card:hover {
+  border-color: rgba(245, 228, 130, 0.45);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+  transform: translateY(-2px);
+}
+
+.template-category-badge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* 6. Regional Video Guide Modal */
+.video-player-container {
+  background: #040810;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+}
+
+.video-screen-simulation {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  background: radial-gradient(circle at 50% 50%, #0d1e38 0%, #03060d 90%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.video-scrub-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  position: relative;
+  cursor: pointer;
+}
+
+.video-scrub-progress {
+  height: 100%;
+  background: #f5e482;
+  transition: width 0.3s ease;
+}
+
+.video-step-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.video-step-row.active {
+  background: rgba(245, 228, 130, 0.1);
+  border-color: rgba(245, 228, 130, 0.3);
+}
+
+/* 7. Connected Worker Terminal & Edge IO vocabulary badges */
+.tech-vocabulary-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.tech-vocabulary-badge.terminal {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+}
+
+.tech-vocabulary-badge.edge-io {
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  color: #34d399;
+}
+
 
