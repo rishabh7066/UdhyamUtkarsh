@@ -1,0 +1,178 @@
+[
+  {
+    "id": "comp-1",
+    "name": "ESP32 DevKit V1 (30-Pin)",
+    "category": "Controller",
+    "avgLocalPrice": 450,
+    "specs": "Dual-Core 240MHz, 2.4GHz Wi-Fi + BLE, 30 GPIO pins, 3.3V logic",
+    "useCase": "Central machine brain, runs AI-generated firmware, sensor reading & relay triggers"
+  },
+  {
+    "id": "comp-2",
+    "name": "Arduino Nano V3.0 (CH340)",
+    "category": "Controller",
+    "avgLocalPrice": 220,
+    "specs": "ATmega328P 16MHz, 14 Digital I/O, 8 Analog Inputs, 5V logic",
+    "useCase": "Low-cost standalone simple sequencing and counter controllers"
+  },
+  {
+    "id": "comp-3",
+    "name": "4-Channel Relay Module (Opto-Isolated)",
+    "category": "Actuators & Relays",
+    "avgLocalPrice": 180,
+    "specs": "Optocoupler isolated, 10A 250VAC / 30VDC, 5V trigger, active LOW",
+    "useCase": "Switching high-voltage cutter motors, pneumatic solenoids, heaters"
+  },
+  {
+    "id": "comp-4",
+    "name": "2-Channel Relay Module (Opto-Isolated)",
+    "category": "Actuators & Relays",
+    "avgLocalPrice": 110,
+    "specs": "10A 250VAC, opto-isolated, high/low level trigger jumper selectable",
+    "useCase": "Dual load control for cutting stroke and feeding clamp"
+  },
+  {
+    "id": "comp-5",
+    "name": "Solid State Relay (SSR-40DA)",
+    "category": "Actuators & Relays",
+    "avgLocalPrice": 380,
+    "specs": "40A 24-380VAC Load, 3-32VDC Input, Zero-crossing, sparkless",
+    "useCase": "High-cycle packaging heat sealer or continuous thermal load"
+  },
+  {
+    "id": "comp-6",
+    "name": "Inductive Proximity Sensor (LJ12A3-4-Z/BX)",
+    "category": "Sensors",
+    "avgLocalPrice": 190,
+    "specs": "4mm detection distance, NPN Normal Open, 6-36VDC, IP67 industrial",
+    "useCase": "Detecting metal stroke endpoints, gear tooth rotation, limit detection"
+  },
+  {
+    "id": "comp-7",
+    "name": "Infrared Obstacle Avoidance Sensor (FC-51)",
+    "category": "Sensors",
+    "avgLocalPrice": 50,
+    "specs": "2-30cm adjustable detection, digital output, 3.3V-5V compatible",
+    "useCase": "Non-contact pipe detection, object arrival on conveyor"
+  },
+  {
+    "id": "comp-8",
+    "name": "Industrial Limit Switch with Roller Lever (ME-8108)",
+    "category": "Sensors",
+    "avgLocalPrice": 160,
+    "specs": "Rotary adjustable arm, 5A 250VAC / 0.4A 115VDC, robust waterproof casing",
+    "useCase": "Heavy mechanical stroke limits for cutting blades and presses"
+  },
+  {
+    "id": "comp-9",
+    "name": "Ultrasonic Distance Sensor (HC-SR04)",
+    "category": "Sensors",
+    "avgLocalPrice": 95,
+    "specs": "2cm to 400cm range, 3mm resolution, 5V trigger/echo",
+    "useCase": "Material level sensing in hoppers, bulk container filling indicator"
+  },
+  {
+    "id": "comp-10",
+    "name": "BTS7960 43A High-Power H-Bridge Motor Driver",
+    "category": "Motor Drivers",
+    "avgLocalPrice": 420,
+    "specs": "6-27VDC, 43A peak current, PWM speed control, thermal/overcurrent protect",
+    "useCase": "High-torque 12V/24V DC conveyor drive and bidirectional feed"
+  },
+  {
+    "id": "comp-11",
+    "name": "L298N Dual H-Bridge Motor Driver",
+    "category": "Motor Drivers",
+    "avgLocalPrice": 130,
+    "specs": "Dual DC motor or 1 stepper, up to 2A per channel, onboard 5V regulator",
+    "useCase": "Small automated feeder and sorting diverter motors"
+  },
+  {
+    "id": "comp-12",
+    "name": "12V 5A Industrial Metal SMPS Power Supply",
+    "category": "Power Supply",
+    "avgLocalPrice": 450,
+    "specs": "Input 100-240VAC, Output 12V 5A (60W), overload & short circuit protection",
+    "useCase": "Clean regulated DC power for ESP32, sensors, relays and motors"
+  },
+  {
+    "id": "comp-13",
+    "name": "5V 2A Step-Down Buck Converter (LM2596)",
+    "category": "Power Supply",
+    "avgLocalPrice": 75,
+    "specs": "4-35V in, 1.23-30V out adjustable, 2A rated (3A peak), 92% efficiency",
+    "useCase": "Stepping down 12V/24V industrial supply to clean 5V logic for ESP32"
+  },
+  {
+    "id": "comp-14",
+    "name": "Emergency Stop Push Button (Mushroom Twist-Release)",
+    "category": "Safety & Controls",
+    "avgLocalPrice": 140,
+    "specs": "1NC + 1NO contact, 10A 440V rated, latching with twist reset, red IP65",
+    "useCase": "Compulsory hardware emergency shutdown interlock"
+  },
+  {
+    "id": "comp-15",
+    "name": "Industrial Green Flush Start Push Button (LAY37)",
+    "category": "Safety & Controls",
+    "avgLocalPrice": 85,
+    "specs": "22mm panel mount, 1NO momentary contact, spring return, 10A rating",
+    "useCase": "Manual cycle trigger for machine operator"
+  },
+  {
+    "id": "comp-16",
+    "name": "Active Industrial Buzzer with LED Indicator (22mm)",
+    "category": "Safety & Controls",
+    "avgLocalPrice": 90,
+    "specs": "12V/24V flashing red indicator, 85dB continuous audio alarm",
+    "useCase": "Batch completion alert, emergency fault alarm"
+  },
+  {
+    "id": "comp-17",
+    "name": "16x2 I2C Character LCD Display (Yellow-Green)",
+    "category": "Display",
+    "avgLocalPrice": 180,
+    "specs": "16 characters x 2 lines, PCF8574 I2C interface, 5V operation",
+    "useCase": "Live machine counter, cycle timer, and operator error diagnostics"
+  },
+  {
+    "id": "comp-18",
+    "name": "0.96 inch I2C OLED Display (128x64 SSD1306)",
+    "category": "Display",
+    "avgLocalPrice": 190,
+    "specs": "128x64 resolution, 3.3V-5V I2C, ultra-crisp blue-white graphics",
+    "useCase": "Compact dashboard for speed, piece count and status messages"
+  },
+  {
+    "id": "comp-19",
+    "name": "Heavy Duty ABS Waterproof Enclosure (IP65 200x150x100mm)",
+    "category": "Accessories",
+    "avgLocalPrice": 320,
+    "specs": "Flame retardant ABS, IP65 rubber seal, mounting lugs included",
+    "useCase": "Dust, oil and vibration protection on factory floor"
+  },
+  {
+    "id": "comp-20",
+    "name": "DIN Rail Terminal Blocks (Pack of 10 with Jumpers)",
+    "category": "Accessories",
+    "avgLocalPrice": 150,
+    "specs": "Screw clamp connection, flame-resistant PA66, 32A 600V rated",
+    "useCase": "Neat, vibration-proof field wiring to sensors and valves"
+  },
+  {
+    "id": "comp-21",
+    "name": "Rotary Incremental Optical Encoder (600P/R)",
+    "category": "Sensors",
+    "avgLocalPrice": 680,
+    "specs": "600 pulses/rev, AB dual-phase, 5-24VDC, 5000 RPM max",
+    "useCase": "Precision length measurement for pipe/wood cutting machines"
+  },
+  {
+    "id": "comp-22",
+    "name": "Single Phase Miniature Circuit Breaker (MCB 6A C-Curve)",
+    "category": "Safety & Controls",
+    "avgLocalPrice": 140,
+    "specs": "6A 240VAC, 10kA breaking capacity, DIN rail mount",
+    "useCase": "Primary AC power isolation and short-circuit protection"
+  }
+]
